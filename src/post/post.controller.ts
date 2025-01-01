@@ -7,10 +7,13 @@ import {
   Delete,
   Put,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Auth } from 'src/middlewares/auth/auth.decorator';
+import { Author } from 'src/author/entities/author.entity';
 
 @Controller('posts')
 export class PostController {
@@ -22,18 +25,22 @@ export class PostController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Auth() author: Author) {
+    console.log(author);
     return this.postService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return this.postService.update(id, updatePostDto);
   }
 
   @Patch(':id')

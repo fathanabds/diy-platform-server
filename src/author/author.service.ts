@@ -34,6 +34,16 @@ export class AuthorService {
     return author;
   }
 
+  async findByName(fullName: string): Promise<Author> {
+    const author = await this.authorRepository.findOne({
+      where: { fullName },
+    });
+    if (!author) {
+      throw new HttpException('Author not found', HttpStatus.NOT_FOUND);
+    }
+    return author;
+  }
+
   async update(id: number, updateAuthorDto: UpdateAuthorDto) {
     const author: Author = await this.authorRepository.findOneBy({ id });
     if (!author) {
